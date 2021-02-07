@@ -24,13 +24,25 @@ public extension Request {
             .sendTokenGenerationRequest(client: client, details: details)
             .parseAppleTokenResponse()
     }
+
+    /// Validates an existing refresh token with Apple's servers.
+    ///
+    /// - parameter details: The details required to validate tokens.
+    ///
+    /// Further reading [Generate and Validate Tokens Documentation](https://developer.apple.com/documentation/sign_in_with_apple/generate_and_validate_tokens).
+    func validateTokens(details: AppleTokenValidationDetails) throws -> EventLoopFuture<AppleTokenResponse> {
+        return try jwt.apple.verify(details.identityToken, applicationIdentifier: details.appIdentifier)
+            .sendTokenValidationRequest(client: client, details: details)
+            .parseAppleTokenResponse()
+    }
 }
 
 // MARK: - Internal Methods
 
 extension EventLoopFuture where Value == AppleIdentityToken {
 
-    func sendTokenGenerationRequest(client: Client, details: AppleTokenGenerationDetails) throws -> EventLoopFuture<ClientResponse> {
+    func sendTokenGenerationRequest(client: Client,
+                                    details: AppleTokenGenerationDetails) throws -> EventLoopFuture<ClientResponse> {
         let authToken = AppleAuthToken(clientId: details.appIdentifier, teamId: details.teamIdentifier)
 
         let signer = JWTSigner.es256(key: details.privateKey.key)
@@ -40,6 +52,20 @@ extension EventLoopFuture where Value == AppleIdentityToken {
                                      clientSecret: clientSecret,
                                      code: details.authorizationCode,
                                      redirectUri: details.redirectURI)
+
+        return try client.postTokenRequest(body: body)
+    }
+
+    func sendTokenValidationRequest(client: Client,
+                                    details: AppleTokenValidationDetails) throws -> EventLoopFuture<ClientResponse> {
+        let authToken = AppleAuthToken(clientId: details.appIdentifier, teamId: details.teamIdentifier)
+
+        let signer = JWTSigner.es256(key: details.privateKey.key)
+        let clientSecret = try signer.sign(authToken, kid: details.privateKey.kid)
+
+        let body = AppleTokenRequest(clientId: details.appIdentifier,
+                                     clientSecret: clientSecret,
+                                     refreshToken: details.refreshToken)
 
         return try client.postTokenRequest(body: body)
     }
