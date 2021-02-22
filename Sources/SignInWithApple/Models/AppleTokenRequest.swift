@@ -75,4 +75,13 @@ struct AppleTokenRequest: Codable, Equatable, Content {
         self.refreshToken = refreshToken
         self.redirectUri = nil
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case clientId = "client_id"
+        case clientSecret = "client_secret"
+        case code
+        case grantType = "grant_type"
+        case refreshToken = "refresh_token"
+        case redirectUri = "redirect_uri"
+    }
 }
