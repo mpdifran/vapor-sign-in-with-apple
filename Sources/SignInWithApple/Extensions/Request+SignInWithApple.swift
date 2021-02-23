@@ -13,24 +13,24 @@ import JWT
 
 public extension Request {
 
-    /// Generates access and refresh tokens by verifying the provided identity token, and performing an exchange with
-    /// Apple's servers.
+    /// Generates access and refresh tokens by verifying the provided identity token, validating an authorization grant
+    /// code, and performing an exchange with Apple's servers.
     ///
     /// - parameter details: The details required to generate tokens.
     ///
     /// Further reading [Generate and Validate Tokens Documentation](https://developer.apple.com/documentation/sign_in_with_apple/generate_and_validate_tokens).
-    func generateTokens(details: AppleTokenGenerationDetails) throws -> EventLoopFuture<AppleTokenResponse> {
+    func generateAppleTokens(details: AppleTokenGenerationDetails) throws -> EventLoopFuture<AppleTokenResponse> {
         return try jwt.apple.verify(details.identityToken, applicationIdentifier: details.appIdentifier)
             .sendTokenGenerationRequest(client: client, details: details)
             .parseAppleTokenResponse()
     }
 
-    /// Validates an existing refresh token with Apple's servers.
+    /// Validates an existing refresh token with Apple's servers, obtaining a new access token.
     ///
     /// - parameter details: The details required to validate tokens.
     ///
     /// Further reading [Generate and Validate Tokens Documentation](https://developer.apple.com/documentation/sign_in_with_apple/generate_and_validate_tokens).
-    func validateTokens(details: AppleTokenValidationDetails) throws -> EventLoopFuture<AppleTokenResponse> {
+    func validateAppleTokens(details: AppleTokenValidationDetails) throws -> EventLoopFuture<AppleTokenResponse> {
         return try jwt.apple.verify(details.identityToken, applicationIdentifier: details.appIdentifier)
             .sendTokenValidationRequest(client: client, details: details)
             .parseAppleTokenResponse()
