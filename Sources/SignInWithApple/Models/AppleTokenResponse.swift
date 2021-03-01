@@ -19,7 +19,7 @@ public struct AppleTokenResponse: Decodable, Equatable, Content {
     public let expiresIn: TimeInterval
 
     /// A JSON Web Token that contains the user’s identity information.
-    public let idToken: String
+    public let idToken: String?
 
     /// The refresh token used to regenerate new access tokens. Store this token securely on your server.
     public let refreshToken: String
