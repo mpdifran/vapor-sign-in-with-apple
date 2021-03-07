@@ -1,5 +1,8 @@
 # Vapor - Sign in with Apple
 
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fmpdifran%2Fvapor-sign-in-with-apple%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/mpdifran/vapor-sign-in-with-apple)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fmpdifran%2Fvapor-sign-in-with-apple%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/mpdifran/vapor-sign-in-with-apple)
+
 Utilities to simplify Sign in with Apple for Vapor projects.
 
 ## Token Generation
