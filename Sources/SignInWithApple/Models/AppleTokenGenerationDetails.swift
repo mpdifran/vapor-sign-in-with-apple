@@ -25,12 +25,14 @@ public struct AppleTokenGenerationDetails: Sendable {
     /// - parameter redirectURI: The destination URI provided in the authorization request when authorizing a user with
     /// your app, if applicable.
     /// - parameter privateKey: The private key you've registered in the developer portal.
-    public init(teamIdentifier: String,
-                appIdentifier: String,
-                identityToken: String,
-                authorizationCode: String,
-                redirectURI: URL? = nil,
-                privateKey: ApplePrivateKey) {
+    public init(
+        teamIdentifier: String,
+        appIdentifier: String,
+        identityToken: String,
+        authorizationCode: String,
+        redirectURI: URL? = nil,
+        privateKey: ApplePrivateKey
+    ) {
         self.teamIdentifier = teamIdentifier
         self.appIdentifier = appIdentifier
         self.identityToken = identityToken

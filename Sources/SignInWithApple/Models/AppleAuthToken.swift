@@ -21,7 +21,11 @@ struct AppleAuthToken: JWTPayload, Sendable {
     /// - parameter clientId: Your app's Bundle ID, or your registered Service ID.
     /// - parameter teamId: Your team identifier, which can be found in the developer portal.
     /// - parameter expirationSeconds: How many seconds until this token expires.
-    init(clientId: String, teamId: String, expirationSeconds: Int = 86400 * 180) {
+    init(
+        clientId: String,
+        teamId: String,
+        expirationSeconds: Int = 86400 * 180
+    ) {
         iss = teamId
         iat = Int(Date().timeIntervalSince1970)
         exp = self.iat + expirationSeconds

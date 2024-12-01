@@ -21,11 +21,13 @@ public struct AppleTokenValidationDetails: Sendable {
     /// your app, if applicable.
     /// - parameter refreshToken: The refresh token you've previously obtained from `Request.generateTokens`.
     /// - parameter privateKey: The private key you've registered in the developer portal.
-    public init(teamIdentifier: String,
-                appIdentifier: String,
-                identityToken: String,
-                refreshToken: String,
-                privateKey: ApplePrivateKey) {
+    public init(
+        teamIdentifier: String,
+        appIdentifier: String,
+        identityToken: String,
+        refreshToken: String,
+        privateKey: ApplePrivateKey
+    ) {
         self.teamIdentifier = teamIdentifier
         self.appIdentifier = appIdentifier
         self.identityToken = identityToken
