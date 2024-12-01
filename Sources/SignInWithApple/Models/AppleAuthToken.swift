@@ -7,9 +7,9 @@
 
 import Foundation
 import Vapor
-import JWT
+@preconcurrency import JWT
 
-struct AppleAuthToken: JWTPayload {
+struct AppleAuthToken: JWTPayload, Sendable {
     let iss: String
     let iat: Int
     let exp: Int

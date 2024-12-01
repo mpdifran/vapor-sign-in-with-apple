@@ -6,9 +6,9 @@
 //
 
 import Foundation
-import JWT
+@preconcurrency import JWT
 
-public struct AppleTokenGenerationDetails {
+public struct AppleTokenGenerationDetails: Sendable {
     public let teamIdentifier: String
     public let appIdentifier: String
     public let identityToken: String

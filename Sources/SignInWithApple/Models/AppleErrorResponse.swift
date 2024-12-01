@@ -10,6 +10,6 @@ import Vapor
 
 /// The repsonse Apple sends when there was an error generating tokens.
 /// - note: [ErrorResponse Documentation](https://developer.apple.com/documentation/sign_in_with_apple/errorresponse)
-struct AppleErrorResponse: Decodable, Equatable, Content {
+struct AppleErrorResponse: Decodable, Equatable, Content, Sendable {
     let error: String
 }

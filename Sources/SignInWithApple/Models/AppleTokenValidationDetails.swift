@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct AppleTokenValidationDetails {
+public struct AppleTokenValidationDetails: Sendable {
     public let teamIdentifier: String
     public let appIdentifier: String
     public let identityToken: String

@@ -6,9 +6,9 @@
 //
 
 import Foundation
-import JWT
+@preconcurrency import JWT
 
-public struct ApplePrivateKey {
+public struct ApplePrivateKey: Sendable {
     public let kid: JWKIdentifier
     public let key: ECDSAKey
 

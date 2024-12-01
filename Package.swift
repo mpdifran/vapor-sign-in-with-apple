@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:6.0
 import PackageDescription
 
 let package = Package(
@@ -9,10 +9,11 @@ let package = Package(
     products: [
         .library(
             name: "SignInWithApple",
-            targets: ["SignInWithApple"]),
+            targets: ["SignInWithApple"]
+        ),
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.3.0"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.99.0"),
         .package(url: "https://github.com/vapor/jwt.git", from: "4.0.0"),
     ],
     targets: [
@@ -21,9 +22,17 @@ let package = Package(
             dependencies: [
                 .product(name: "Vapor", package: "vapor"),
                 .product(name: "JWT", package: "jwt"),
-            ]),
+            ],
+            swiftSettings: swiftSettings
+        ),
         .testTarget(
             name: "SignInWithAppleTests",
-            dependencies: ["SignInWithApple"]),
+            dependencies: ["SignInWithApple"],
+            swiftSettings: swiftSettings
+        ),
     ]
 )
+
+var swiftSettings: [SwiftSetting] { [
+    .enableExperimentalFeature("StrictConcurrency"),
+] }

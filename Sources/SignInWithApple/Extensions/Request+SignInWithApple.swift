@@ -7,11 +7,21 @@
 
 import Foundation
 import Vapor
-import JWT
+@preconcurrency import JWT
+
+public extension Request {
+    var signInWithApple: Request.SignInWithApple {
+        .init(request: self)
+    }
+
+    struct SignInWithApple {
+        let request: Request
+    }
+}
 
 // MARK: - Public Methods
 
-public extension Request {
+public extension Request.SignInWithApple {
 
     /// Generates access and refresh tokens by verifying the provided identity token, validating an authorization grant
     /// code, and performing an exchange with Apple's servers.
@@ -19,10 +29,9 @@ public extension Request {
     /// - parameter details: The details required to generate tokens.
     ///
     /// Further reading [Generate and Validate Tokens Documentation](https://developer.apple.com/documentation/sign_in_with_apple/generate_and_validate_tokens).
-    func generateAppleTokens(details: AppleTokenGenerationDetails) throws -> EventLoopFuture<AppleTokenResponse> {
-        return try jwt.apple.verify(details.identityToken, applicationIdentifier: details.appIdentifier)
-            .sendTokenGenerationRequest(client: client, details: details)
-            .parseAppleTokenResponse()
+    func generateAppleTokens(details: AppleTokenGenerationDetails) async throws -> AppleTokenResponse {
+        let _ = try await request.jwt.apple.verify(details.identityToken, applicationIdentifier: details.appIdentifier).get()
+        return try await sendTokenGenerationRequest(details: details)
     }
 
     /// Validates an existing refresh token with Apple's servers, obtaining a new access token.
@@ -30,19 +39,17 @@ public extension Request {
     /// - parameter details: The details required to validate tokens.
     ///
     /// Further reading [Generate and Validate Tokens Documentation](https://developer.apple.com/documentation/sign_in_with_apple/generate_and_validate_tokens).
-    func validateAppleTokens(details: AppleTokenValidationDetails) throws -> EventLoopFuture<AppleTokenResponse> {
-        return try jwt.apple.verify(details.identityToken, applicationIdentifier: details.appIdentifier)
-            .sendTokenValidationRequest(client: client, details: details)
-            .parseAppleTokenResponse()
+    func validateAppleTokens(details: AppleTokenValidationDetails) async throws -> AppleTokenResponse {
+        let _ = try await request.jwt.apple.verify(details.identityToken, applicationIdentifier: details.appIdentifier).get()
+        return try await sendTokenValidationRequest(details: details)
     }
 }
 
 // MARK: - Internal Methods
 
-extension EventLoopFuture where Value == AppleIdentityToken {
+private extension Request.SignInWithApple {
 
-    func sendTokenGenerationRequest(client: Client,
-                                    details: AppleTokenGenerationDetails) throws -> EventLoopFuture<ClientResponse> {
+    func sendTokenGenerationRequest(details: AppleTokenGenerationDetails) async throws -> AppleTokenResponse {
         let authToken = AppleAuthToken(clientId: details.appIdentifier, teamId: details.teamIdentifier)
 
         let signer = JWTSigner.es256(key: details.privateKey.key)
@@ -53,11 +60,11 @@ extension EventLoopFuture where Value == AppleIdentityToken {
                                      code: details.authorizationCode,
                                      redirectUri: details.redirectURI)
 
-        return try client.postTokenRequest(body: body)
+        let response = try await request.client.postTokenRequest(body: body)
+        return try response.parseAppleTokenResponse()
     }
 
-    func sendTokenValidationRequest(client: Client,
-                                    details: AppleTokenValidationDetails) throws -> EventLoopFuture<ClientResponse> {
+    func sendTokenValidationRequest(details: AppleTokenValidationDetails) async throws -> AppleTokenResponse {
         let authToken = AppleAuthToken(clientId: details.appIdentifier, teamId: details.teamIdentifier)
 
         let signer = JWTSigner.es256(key: details.privateKey.key)
@@ -67,26 +74,22 @@ extension EventLoopFuture where Value == AppleIdentityToken {
                                      clientSecret: clientSecret,
                                      refreshToken: details.refreshToken)
 
-        return try client.postTokenRequest(body: body)
+        let response = try await request.client.postTokenRequest(body: body)
+        return try response.parseAppleTokenResponse()
     }
 }
 
-extension EventLoopFuture where Value == ClientResponse {
+private extension ClientResponse {
 
-    func parseAppleTokenResponse() -> EventLoopFuture<AppleTokenResponse> {
-        flatMapThrowing { (response) -> AppleTokenResponse in
-            if let error = response.parseAppleErrorResponse() {
-                throw error
-            }
-
-            return try response.content.decode(AppleTokenResponse.self)
+    func parseAppleTokenResponse() throws -> AppleTokenResponse {
+        if let error = parseAppleErrorResponse() {
+            throw error
         }
+
+        return try content.decode(AppleTokenResponse.self)
     }
-}
 
-extension ClientResponse {
-
-    func parseAppleErrorResponse() -> Error? {
+    private func parseAppleErrorResponse() -> Error? {
         do {
             let error = try content.decode(AppleErrorResponse.self)
             return NSError(domain: "Vapor - Sign in with Apple",

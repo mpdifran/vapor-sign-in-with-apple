@@ -10,11 +10,11 @@ import Vapor
 
 extension Client {
 
-    func postTokenRequest(body: AppleTokenRequest) throws -> EventLoopFuture<ClientResponse> {
+    func postTokenRequest(body: AppleTokenRequest) async throws -> ClientResponse {
         var headers = HTTPHeaders()
         headers.add(name: "Content-Type", value: "application/x-www-form-urlencoded")
 
-        return post("https://appleid.apple.com/auth/token", headers: headers) { (request) in
+        return try await post("https://appleid.apple.com/auth/token", headers: headers) { (request) in
             request.body = .init(string: try URLEncodedFormEncoder().encode(body))
         }
     }
