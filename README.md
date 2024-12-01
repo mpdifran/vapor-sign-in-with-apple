@@ -5,18 +5,45 @@
 
 Utilities to simplify Sign in with Apple for Vapor projects.
 
+## Setup
+
+Link to your project like so:
+
+```swift
+dependencies: [
+    ...
+    .package(url: "https://github.com/mpdifran/vapor-sign-in-with-apple.git", from: "1.0.0"),
+],
+```
+
+```swift
+targets: [
+    .executableTarget(
+        name: "App",
+        dependencies: [
+            ...
+            .product(name: "SignInWithApple", package: "vapor-sign-in-with-apple"),
+        ]
+    )
+],
+```
+
 ## Token Generation
 Use the following method to generate refresh and access tokens from Apple's servers. Apple's documentation on this process can be found [here](https://developer.apple.com/documentation/sign_in_with_apple/generate_and_validate_tokens).
-```
+
+```swift
 let details = AppleTokenGenerationDetails(...)
-let tokenResponse = try await request.signInWithApple.generateAppleTokens(details: details)    
+let tokenResponse = try await request.signInWithApple.generateAppleTokens(details: details)
+
 // Store tokens
 ```
 
 ## Token Validation
 Use the following method to validate an existing refresh token obtained by the above method. Apple's documentation on this process can be found [here](https://developer.apple.com/documentation/sign_in_with_apple/generate_and_validate_tokens).
-```
+
+```swift
 let details = AppleTokenValidationDetails(...)
 let tokenResponse = try await request.signInWithApple.validateAppleTokens(details: details)
+
 // Store tokens
 ```
