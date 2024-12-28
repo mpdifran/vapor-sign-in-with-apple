@@ -10,7 +10,7 @@ import Vapor
 
 /// The request to send to Apple's servers in order to generate or validate tokens.
 /// - note: [Generate and Validate Tokens Documentation](https://developer.apple.com/documentation/sign_in_with_apple/generate_and_validate_tokens)
-struct AppleTokenRequest: Codable, Equatable, Content, Sendable {
+struct AppleTokenRequest: Codable, Hashable, Content, Sendable {
     enum GrantType: String, Codable {
         case authorizationCode = "authorization_code"
         case refreshToken = "refresh_token"
