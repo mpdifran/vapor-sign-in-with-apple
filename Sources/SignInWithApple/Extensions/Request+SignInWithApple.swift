@@ -70,9 +70,9 @@ private extension Request.SignInWithApple {
             do {
                 let data = try response.content.decode(Data.self)
                 let rawResponse = String(data: data, encoding: .utf8)
-                request.logger.debug("Token Generation Response:\n\(rawResponse ?? "Empty Response")")
+                request.logger.info("Token Generation Response:\n\(rawResponse ?? "Empty Response")")
             } catch {
-                request.logger.debug(.init(stringLiteral: error.localizedDescription))
+                request.logger.info(.init(stringLiteral: error.localizedDescription))
             }
         }
 
@@ -97,9 +97,9 @@ private extension Request.SignInWithApple {
             do {
                 let data = try response.content.decode(Data.self)
                 let rawResponse = String(data: data, encoding: .utf8)
-                request.logger.debug("Token Validation Response:\n\(rawResponse ?? "Empty Response")")
+                request.logger.info("Token Validation Response:\n\(rawResponse ?? "Empty Response")")
             } catch {
-                request.logger.debug(.init(stringLiteral: error.localizedDescription))
+                request.logger.info(.init(stringLiteral: error.localizedDescription))
             }
         }
 
