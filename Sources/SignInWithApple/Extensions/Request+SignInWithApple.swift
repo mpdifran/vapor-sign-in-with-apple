@@ -67,12 +67,13 @@ private extension Request.SignInWithApple {
         let response = try await request.client.postTokenRequest(body: body)
 
         if debug {
+            print("In Debug Mode")
             do {
                 let data = try response.content.decode(Data.self)
                 let rawResponse = String(data: data, encoding: .utf8)
-                request.logger.info("Token Generation Response:\n\(rawResponse ?? "Empty Response")")
+                print("Token Generation Response:\n\(rawResponse ?? "Empty Response")")
             } catch {
-                request.logger.info(.init(stringLiteral: error.localizedDescription))
+                print(error.localizedDescription)
             }
         }
 
@@ -94,12 +95,13 @@ private extension Request.SignInWithApple {
         let response = try await request.client.postTokenRequest(body: body)
 
         if debug {
+            print("In Debug Mode")
             do {
                 let data = try response.content.decode(Data.self)
                 let rawResponse = String(data: data, encoding: .utf8)
-                request.logger.info("Token Validation Response:\n\(rawResponse ?? "Empty Response")")
+                print("Token Validation Response:\n\(rawResponse ?? "Empty Response")")
             } catch {
-                request.logger.info(.init(stringLiteral: error.localizedDescription))
+                print(error.localizedDescription)
             }
         }
 
