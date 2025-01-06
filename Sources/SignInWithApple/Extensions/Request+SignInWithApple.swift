@@ -92,17 +92,12 @@ private extension ClientResponse {
             throw error
         }
 
-        do {
-            return try content.decode(AppleTokenResponse.self)
-        } catch {
-            print("Could not decode response:\n\(content)")
-            throw error
-        }
+        return try content.decode(AppleTokenResponse.self, using: JSONDecoder.apple)
     }
 
     private func parseAppleErrorResponse() -> Error? {
         do {
-            let error = try content.decode(AppleErrorResponse.self)
+            let error = try content.decode(AppleErrorResponse.self, using: JSONDecoder.apple)
             return NSError(domain: "Vapor - Sign in with Apple",
                            code: 0,
                            userInfo: [NSLocalizedDescriptionKey : error.error])
